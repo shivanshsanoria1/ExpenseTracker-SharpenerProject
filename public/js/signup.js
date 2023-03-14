@@ -1,4 +1,5 @@
 const PORT = '3000';
+const HOST = 'http://localhost';
 
 const form = document.getElementById('user-form');
 const usernameInput = document.getElementById('username');
@@ -14,7 +15,7 @@ function addUser(e){
         email: emailInput.value,
         password: passwordInput.value
     };
-    axios.post('http://localhost:' + PORT + '/user/signup', user)
+    axios.post(`${HOST}:${PORT}/user/signup`, user)
     .then((res) => {
         const msg = res.data.msg;
         showSuccessInDOM(msg);

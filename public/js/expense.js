@@ -1,4 +1,5 @@
 const PORT = '3000';
+const HOST = 'http://localhost';
 const token = localStorage.getItem('token');
 let balance = 0;
 let EXPENSE_ID = null;
@@ -48,7 +49,7 @@ function updateBalanceDOM(amount, mode){
 
 function deleteExpense(li){
     const expenseId = li.id;
-    axios.post('http://localhost:' + PORT + '/expense/delete-expense/' + expenseId, {}, {headers: {'Authorization': token}})
+    axios.post(`${HOST}:${PORT}/expense/delete-expense/${expenseId}`, {}, {headers: {'Authorization': token}})
     .then((res) => {
         expenseList.removeChild(li);
         updateBalanceDOM(res.data.amount, '-');
@@ -60,7 +61,7 @@ function deleteExpense(li){
 
 function editExpense(li){
     const expenseId = li.id;
-    axios.get('http://localhost:' + PORT + '/expense/edit-expense/' + expenseId, {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/expense/edit-expense/${expenseId}`, {headers: {'Authorization': token}})
     .then((res) => {
         const amount = parseInt(res.data.amount);
         if(amount > 0){
@@ -166,7 +167,7 @@ function getAllExpenses(page=1, limit=5){
     if(localStorage.getItem('limit')){
         limit = localStorage.getItem('limit');
     }
-    axios.get(`http://localhost:${PORT}/expense/get-expenses?page=${page}&limit=${limit}`, {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/expense/get-expenses?page=${page}&limit=${limit}`, {headers: {'Authorization': token}})
     .then((res) => {
         const expenses = res.data.expenses;
         balance = res.data.balance;
@@ -209,7 +210,7 @@ function addExpense(e){
         expenseId: EXPENSE_ID
     };
     
-    axios.post('http://localhost:' + PORT + '/expense/add-expense', expense, {headers: {'Authorization': token}})
+    axios.post(`${HOST}:${PORT}/expense/add-expense`, expense, {headers: {'Authorization': token}})
     .then((res) => {
         showExpenseInDOM(res.data);
         if(EXPENSE_ID){
@@ -236,14 +237,14 @@ function showErrorInDOM(msg){
 }
 
 function razorpay(e){
-    axios.get('http://localhost:' + PORT + '/purchase/premium-membership', {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/purchase/premium-membership`, {headers: {'Authorization': token}})
     .then((res) => {
         const options = {
             "key": res.data.key_id, //enter the key id generated from the dashboard
             "order_id": res.data.order.id, //for one time payment
             "handler": async function () {
                 try{
-                    const res1 = await axios.post('http://localhost:' + PORT + '/purchase/update-transaction-status', {
+                    const res1 = await axios.post(`${HOST}:${PORT}/purchase/update-transaction-status`, {
                         status: 'success',
                         order_id: options.order_id,
                         payment_id: res.razorpay_payment_id
@@ -260,7 +261,7 @@ function razorpay(e){
         const rzp1 = new Razorpay(options);
         rzp1.on('payment.failed', async (err) => {
             try{
-                await axios.post('http://localhost:' + PORT + '/purchase/update-transaction-status', {
+                await axios.post(`${HOST}:${PORT}/purchase/update-transaction-status`, {
                     status: 'failed',
                     order_id: err.error.metadata.order_id
                 }, {headers: {'Authorization': token}});
@@ -290,7 +291,7 @@ function logoutUser(){
 }
 
 function downloadExpenses(){
-    axios.get('http://localhost:' + PORT + '/premium/download-expenses', {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/premium/download-expenses`, {headers: {'Authorization': token}})
     .then((res) => {
         const fileURL = res.data.fileURL;
         window.open(fileURL, '_blank');
@@ -339,7 +340,7 @@ function hideLeaderboardInDOM(){
 }
 
 function showLeaderboardInDOM(){
-    axios.get('http://localhost:' + PORT + '/premium/get-leaderboard', {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/premium/get-leaderboard`, {headers: {'Authorization': token}})
     .then((res) => {
         leaderboardHeading.innerText = 'Leaderboard (Top 5)';
         const list = res.data;
@@ -370,7 +371,7 @@ function hideDownloadedExpenseFileHistoryInDOM(){
 }
 
 function showDownloadedExpenseFileHistoryInDOM(){
-    axios.get('http://localhost:' + PORT + '/premium/downloaded-expense-file-history', {headers: {'Authorization': token}})
+    axios.get(`${HOST}:${PORT}/premium/downloaded-expense-file-history`, {headers: {'Authorization': token}})
     .then((res) => {
         downloadHistoryHeading.innerText = 'Download History (Last 10)';
         const list = res.data.reverse();
