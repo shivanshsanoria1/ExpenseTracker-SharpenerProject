@@ -1,5 +1,5 @@
 const PORT = '3000';
-const HOST = 'http://44.201.57.226'; //use 'http://localhost' during development
+const HOST = 'http://localhost'; //use 'http://localhost' during development
 
 const form = document.getElementById('user-form');
 const passwordInput = document.getElementById('password');

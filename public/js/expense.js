@@ -1,5 +1,5 @@
 const PORT = '3000';
-const HOST = 'http://44.201.57.226'; //use 'http://localhost' during development
+const HOST = 'http://localhost'; //use 'http://localhost' during development
 
 const token = localStorage.getItem('token');
 let balance = 0;
@@ -288,7 +288,7 @@ function parseJwt (token) {
 }
 
 function logoutUser(){
-    window.location.href = 'http://localhost:' + PORT + '/user/login';
+    window.location.href = `${HOST}:${PORT}/user/login`;
 }
 
 function downloadExpenses(){
