@@ -1,5 +1,4 @@
-const PORT = '3000';
-const HOST = 'http://3.220.166.17'; //use 'http://localhost' during development
+const HOST = 'http://' + window.location.host;
 
 const form = document.getElementById('user-form');
 const password1Input = document.getElementById('password1');
@@ -17,7 +16,7 @@ function resetPassword(e){
         password: password1Input.value,
         link: window.location.href
     };
-    axios.post(`${HOST}:${PORT}/password/reset-password`, user)
+    axios.post(`${HOST}/password/reset-password`, user)
     .then((res) => {
         const msg = res.data.msg;
         showSuccessInDOM(msg);

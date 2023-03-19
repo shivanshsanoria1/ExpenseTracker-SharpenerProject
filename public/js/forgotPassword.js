@@ -1,5 +1,4 @@
-const PORT = '3000';
-const HOST = 'http://3.220.166.17'; //use 'http://localhost' during development
+const HOST = 'http://' + window.location.host;
 
 const form = document.getElementById('user-form');
 const emailInput = document.getElementById('email');
@@ -11,7 +10,7 @@ function forgotPassword(e){
     const user = {
         email: emailInput.value
     };
-    axios.post(`${HOST}:${PORT}/password/forgot-password`, user)
+    axios.post(`${HOST}/password/forgot-password`, user)
     .then((res) => {
         const msg = res.data.msg;
         showSuccessInDOM(msg);
