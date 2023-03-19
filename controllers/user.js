@@ -12,7 +12,7 @@ function generateAccessToken(id, name, isPremiumUser){
 exports.generateAccessToken = generateAccessToken;
 
 exports.getSignup = (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'views', 'signup.html'));
+    res.status(200).sendFile(path.join(__dirname, '..', 'views', 'signup.html'));
 };
 
 exports.postSignup = (req, res) => {
@@ -52,7 +52,7 @@ exports.postSignup = (req, res) => {
 };
 
 exports.getLogin = (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'views', 'login.html'));
+    res.status(200).sendFile(path.join(__dirname, '..', 'views', 'login.html'));
 };
 
 exports.postLogin = async (req, res) => {

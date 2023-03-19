@@ -1,19 +1,24 @@
 const PORT = '3000';
-const HOST = 'http://3.220.166.17'; //use 'http://localhost' during development
+const HOST = 'http://localhost'; //use 'http://localhost' during development
 
 const form = document.getElementById('user-form');
 const usernameInput = document.getElementById('username');
 const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
+const password1Input = document.getElementById('password1');
+const password2Input = document.getElementById('password2');
 const errorMsg = document.getElementById('err-msg');
 const successMsg = document.getElementById('success-msg');
 
 function addUser(e){
     e.preventDefault();
+    if(password1Input.value !== password2Input.value){
+        showErrorInDOM('Passwords must match');
+        return;
+    }
     const user = {
         username: usernameInput.value,
         email: emailInput.value,
-        password: passwordInput.value
+        password: password1Input.value
     };
     axios.post(`${HOST}:${PORT}/user/signup`, user)
     .then((res) => {
@@ -21,7 +26,8 @@ function addUser(e){
         showSuccessInDOM(msg);
         usernameInput.value = '';
         emailInput.value = '';
-        passwordInput.value = '';
+        password1Input.value = '';
+        password2Input.value = '';
     })
     .catch((err) => {
         const msg = err.response.data.msg ? err.response.data.msg : 'Could not add user';

@@ -1,5 +1,5 @@
 const PORT = '3000';
-const HOST = 'http://3.220.166.17'; //use 'http://localhost' during development
+const HOST = 'http://localhost'; //use 'http://localhost' during development
 
 const token = localStorage.getItem('token');
 let balance = 0;

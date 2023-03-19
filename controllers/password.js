@@ -79,7 +79,7 @@ exports.getResetPassword = async (req, res) => {
             res.status(400).json({msg: 'id not found or expired'});
             return;
         }
-        res.sendFile(path.join(__dirname, '..', 'views', 'resetPassword.html'));
+        res.status(200).sendFile(path.join(__dirname, '..', 'views', 'resetPassword.html'));
     }catch(err){
         console.log('GET RESET PASSWORD ERROR');
         res.status(500).json({error: err, msg:'Something went wrong'});
