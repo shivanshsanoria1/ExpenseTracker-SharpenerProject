@@ -1,5 +1,4 @@
-const PORT = '3000';
-const HOST = 'http://3.220.166.17'; //use 'http://localhost' during development
+const HOST = 'http://' + window.location.host;
 
 const form = document.getElementById('user-form');
 const emailInput = document.getElementById('email');
@@ -13,7 +12,7 @@ function loginUser(e){
         email: emailInput.value,
         password: passwordInput.value
     };
-    axios.post(`${HOST}:${PORT}/user/login`, user)
+    axios.post(`${HOST}/user/login`, user)
     .then((res) => {
         localStorage.setItem('token', res.data.token);
         window.location.href = '/expense/add-expense';
