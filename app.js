@@ -8,6 +8,7 @@ const morgan = require('morgan');
 //const helmet = require('helmet');
 
 const sequelize = require('./util/database');
+const homepageRoutes = require('./routes/homepage');
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const purchaseRoutes = require('./routes/purchase');
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use(helmet());
 app.use(morgan('combined', { stream: accessLogStream }));
 
+app.use(homepageRoutes);
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes);
 app.use('/purchase', purchaseRoutes);
