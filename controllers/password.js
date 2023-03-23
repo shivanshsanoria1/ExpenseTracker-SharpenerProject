@@ -19,11 +19,15 @@ exports.getForgotPassword = (req, res) => {
 }
 
 exports.postForgotPassword = async (req, res) => {
+    const host = req.headers.origin;
     const ReceiverEmail = req.body.email;
     if(!ReceiverEmail){
         res.status(400).json({msg: 'Email is required'});
         return;
     }
+
+    const t = await sequelize.transaction();
+
     try{
         const user = await User.findOne({where: {email: ReceiverEmail}});
         if(!user){
@@ -31,42 +35,38 @@ exports.postForgotPassword = async (req, res) => {
             return;
         }
 
-        const userId = user.id;
         const id = uuid.v4();
+
         await ForgotPassword.create({
             id,
             isActive: true,
-            userId,
-        });
+            userId: user.id
+        }, {transaction: t});
 
         const tranEmailApi = new Sib.TransactionalEmailsApi();
 
-        const sender = {
-            email: process.env.SIB_SENDER_EMAIL
-        };
-        const receivers = [
-            {
-                email: ReceiverEmail
-            }
-        ];
+        const sender = { email: process.env.SIB_SENDER_EMAIL };
+        const receivers = [{ email: ReceiverEmail }];
 
-        tranEmailApi.sendTransacEmail({
+        const result = await tranEmailApi.sendTransacEmail({
             sender: sender,
             to: receivers,
             subject: 'Password reset link',
             htmlContent: `
-                <a href="http://localhost:3000/password/reset-password/${id}" target="_blank">Click here to reset password</a>
+                <a href="${host}/password/reset-password/${id}" target="_blank">
+                    Click here to reset password
+                </a>
             `
-        })
-        .then((result) => {
-            res.status(200).json({msg: 'Password reset link sent to your email'});
-        })
-        .catch((err) => {
-            console.log('POST FORGOT PASSWORD ERROR');
-            res.status(500).json({error: err, msg: 'Could not send password reset link'});
-        });
+        }, {transaction: t});
+        if(!result){
+            res.status(500).json({msg: 'Could not send password reset link'});
+            return;
+        }
+        await t.commit();
+        res.status(200).json({msg: 'Password reset link sent to your email'});
     }catch(err){
         console.log('POST FORGOT PASSWORD ERROR');
+        await t.rollback();
         res.status(500).json({error: err, msg:'Something went wrong'});
     }
 }
@@ -74,7 +74,7 @@ exports.postForgotPassword = async (req, res) => {
 exports.getResetPassword = async (req, res) => {
     const id = req.params.id;
     try{
-        const forgotPassword = await ForgotPassword.findOne({where: {id}});
+        const forgotPassword = await ForgotPassword.findOne({ where: {id} });
         if(!forgotPassword || forgotPassword.isActive === false){
             res.status(400).json({msg: 'id not found or expired'});
             return;
@@ -90,9 +90,9 @@ exports.postResetPassword = async (req, res) => {
     const newPassword = req.body.password;
     const id = req.body.link.split('/')[req.body.link.split('/').length-1];
     
-    try{
-        const t = await sequelize.transaction();
+    const t = await sequelize.transaction();
 
+    try{
         const forgotPassword = await ForgotPassword.findOne({where: {id}, transaction: t});
         if(!forgotPassword){
             res.status(400).json({msg: 'User not found'});

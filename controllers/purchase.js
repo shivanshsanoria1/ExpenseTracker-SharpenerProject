@@ -42,7 +42,10 @@ exports.updateTransactionStatus = async (req, res) => {
         Promise.all([promise1, promise2])
         .then(() => {
             if(status === 'success'){
-                return res.status(200).json({success: true, msg: 'Transaction Successful', token: userController.generateAccessToken(userId, username, true)});
+                return res.status(200).json({
+                    success: true, msg: 'Transaction Successful', 
+                    token: userController.generateAccessToken(userId, username, true)
+                });
             }else{
                 return res.status(200).json({success: false, msg: 'Transaction Failed'});
             }

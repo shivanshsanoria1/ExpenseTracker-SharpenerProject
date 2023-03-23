@@ -9,9 +9,9 @@ exports.getAddExpense = (req, res) => {
 }
 
 exports.postAddExpense = async (req, res) => {
+    const t = await sequelize.transaction();
+    
     try{
-        const t = await sequelize.transaction();
-
         const amount = req.body.amount;
         const description = req.body.description;
         const category = req.body.category;
@@ -61,7 +61,7 @@ exports.getAllExpenses = async (req, res) => {
         const limit = parseInt(req.query.limit);
 
         const expenses = await Expense.findAll({ where: {userId: user.id} });
-        const userFromDB = await User.findOne({where:{id: user.id}});
+        const userFromDB = await User.findOne({ where: {id: user.id} });
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
@@ -82,22 +82,20 @@ exports.getAllExpenses = async (req, res) => {
     }
 }
 
-exports.postDeleteExpense = async (req, res) => {
-    try{
-        const t = await sequelize.transaction();
+exports.deleteDeleteExpense = async (req, res) => {
+    const t = await sequelize.transaction();
 
+    try{
         const expenseId = req.params.expenseId;
         const userId = req.user.id;
 
         const expense = await Expense.findOne({ where: {id: expenseId, userId: userId}, transaction: t });
         if(!expense){
-            await t.rollback();
             res.status(404).json({ msg: 'Item not found' });
             return;
         }
 
-        const amount = expense.amount;
-        const updatedBalance = parseInt(req.user.balance) - parseInt(amount);
+        const updatedBalance = parseInt(req.user.balance) - parseInt(expense.amount);
 
         await User.update({balance: updatedBalance}, {where: {id: userId}, transaction: t});
 

@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 exports.authenticate = (req, res, next) => {
     const token = req.headers.authorization;
-    const user = jwt.verify(token, process.env.SECRETKEY);
+    const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
     User.findByPk(user.userId)
     .then((user) => {
         req.user = user;
@@ -15,7 +15,7 @@ exports.authenticate = (req, res, next) => {
 
 exports.isPremiumUser = (req, res, next) => {
     const token = req.headers.authorization;
-    const user = jwt.verify(token, process.env.SECRETKEY);
+    const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
     User.findByPk(user.userId)
     .then((user) => {
         req.user = user;

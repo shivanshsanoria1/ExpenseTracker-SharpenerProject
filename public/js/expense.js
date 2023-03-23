@@ -49,7 +49,7 @@ function updateBalanceDOM(amount, mode){
 
 function deleteExpense(li){
     const expenseId = li.id;
-    axios.post(`${HOST}/expense/delete-expense/${expenseId}`, {}, {headers: {'Authorization': token}})
+    axios.delete(`${HOST}/expense/delete-expense/${expenseId}`, {headers: {'Authorization': token}})
     .then((res) => {
         expenseList.removeChild(li);
         updateBalanceDOM(res.data.amount, '-');
@@ -293,7 +293,7 @@ function logoutUser(){
 function downloadExpenses(){
     axios.get(`${HOST}/premium/download-expenses`, {headers: {'Authorization': token}})
     .then((res) => {
-        const fileURL = res.data.fileURL;
+        const fileURL = res.data;
         window.open(fileURL, '_blank');
     })
     .catch((err) => {

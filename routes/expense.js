@@ -10,7 +10,7 @@ router.post('/add-expense', userAuthentication.authenticate, expenseController.p
 
 router.get('/get-expenses', userAuthentication.authenticate, expenseController.getAllExpenses);
 
-router.post('/delete-expense/:expenseId', userAuthentication.authenticate, expenseController.postDeleteExpense);
+router.delete('/delete-expense/:expenseId', userAuthentication.authenticate, expenseController.deleteDeleteExpense);
 
 router.get('/edit-expense/:expenseId', userAuthentication.authenticate, expenseController.getEditExpense);
 
